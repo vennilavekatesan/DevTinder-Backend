@@ -1,16 +1,29 @@
 const express = require('express');
 const app = express();
 
+const {adminAuth, userAuth} = require('./middlewares/auth.js')
+
+
+// handle auth middleware for all GET, POST,PUT,PATCH,DELETE requests
+
+app.use('/admin', adminAuth);
+
+app.use('/user/login', (req,res)=>{
+    //login doesn't need auth so we are not using userAuth 
+    // so this is why the middleware is used like if the auth is need we an use like the below user/data if doesn't need we are not calling
+    res.send('login successfully');
+})
+
+app.use('/user/data', userAuth, (req, res)=>{
+    res.send('Data is sent');
+})
+
 app.get('/admin/getUserData', (req,res)=>{
-    // need to check the authentication and authorization
-    // if the user is not authenticated or authorized, send an error response
-    // else send the user data
-    const token = 'xyzhhhljl';
-    const isAdminAuthorized = token === 'xyz'; // this is just a dummy check, in real application you would check the token against a database or some other service
-    if(!isAdminAuthorized) {
-        res.status(401).send('Unauthorized: Admin access required');
-    }
     res.send('User Data');
+})
+
+app.get('/admin/getDelete', (req, res)=>{
+    res.send('User Deleted');
 })
 
 app.listen(7777, ()=>{
